@@ -1,6 +1,6 @@
 Name:       gbp-test
 Summary:    Test package for git-buildpackage
-Version:    1.0
+Version:    1.1
 Release:    1
 Group:      Development/Libraries
 License:    GPLv2
