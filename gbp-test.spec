@@ -10,11 +10,11 @@ Source20:   bar.tar.gz
 # Gbp-Ignore-Patches: 0
 Patch0:     my.patch
 Patch10:    my2.patch
-Patch20:    my3.patch
 
 
 %description
 Package for testing the RPM functionality of git-buildpackage.
+Other version.
 
 
 %prep
