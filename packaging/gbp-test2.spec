@@ -2,7 +2,7 @@ Name:       gbp-test2
 Summary:    Test package 2 for git-buildpackage
 Epoch:      1
 Version:    2.0
-Release:    0
+Release:    1
 Group:      Development/Libraries
 License:    GPLv2
 Source10:   ftp://ftp.host.com/%{name}-%{version}.tar.gz
@@ -11,8 +11,6 @@ Source20:   bar.tar.gz
 Source9999: gbp-test2-alt.spec
 # Gbp-Ignore-Patches: -1
 Patch:      my.patch
-Patch10:    http://example.com/patches/my2.patch
-Patch20:    my3.patch
 Packager:   Markus Lehtonen <markus.lehtonen@linux.intel.com>
 
 %description
@@ -25,7 +23,6 @@ git branch.
 %setup -T -n %{name}-%{version} -c -a 10
 
 %patch
-%patch -P 10 -p1
 
 echo "Do things"
 
