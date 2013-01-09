@@ -1,5 +1,5 @@
-Name:       gbp-test2
-Summary:    Test package 2 for git-buildpackage
+Name:       gbp-test2-alt
+Summary:    Test package 2 alternative for git-buildpackage
 Epoch:      1
 Version:    2.0
 Release:    0
@@ -8,7 +8,6 @@ License:    GPLv2
 Source10:   ftp://ftp.host.com/%{name}-%{version}.tar.gz
 Source:     foo.txt
 Source20:   bar.tar.gz
-Source9999: gbp-test2-alt.spec
 # Gbp-Ignore-Patches: 0
 Patch:      my.patch
 Patch10:    http://example.com/patches/my2.patch
@@ -18,14 +17,14 @@ Packager:   Markus Lehtonen <markus.lehtonen@linux.intel.com>
 %description
 Package for testing the RPM functionality of git-buildpackage.
 Version 2 which has packaging and development in the same
-git branch.
+git branch. Alternative spec file used.
 
 
 %prep
 %setup -T -n %{name}-%{version} -c -a 10
 
 %patch
-%patch -P 10 -p1
+%patch -P 20 -p1
 
 echo "Do things"
 
