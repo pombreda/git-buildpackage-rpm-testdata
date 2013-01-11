@@ -9,7 +9,7 @@ Source10:   ftp://ftp.host.com/%{name}-%{version}.tar.gz
 Source:     foo.txt
 Source20:   bar.tar.gz
 Source9999: gbp-test2-alt.spec
-# Gbp-Ignore-Patches: 0
+# Gbp-Ignore-Patches: -1
 Patch:      my.patch
 Patch10:    http://example.com/patches/my2.patch
 Patch20:    my3.patch
