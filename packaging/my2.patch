@@ -1,3 +1,12 @@
+From fb613432f15bc199a724741883b23fff9946b567 Mon Sep 17 00:00:00 2001
+From: Markus Lehtonen <markus.lehtonen@linux.intel.com>
+Date: Tue, 13 Nov 2012 13:55:46 +0200
+Subject: [PATCH] My modification
+
+Add new file 'mydir/myfile.txt'.
+
+Signed-off-by: Markus Lehtonen <markus.lehtonen@linux.intel.com>
+
 diff --git a/mydir/myfile.txt b/mydir/myfile.txt
 new file mode 100644
 index 0000000..2cdad29
