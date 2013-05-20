@@ -1,7 +1,7 @@
 Name:       gbp-test
 Summary:    Test package for git-buildpackage
 Version:    1.1
-Release:    1
+Release:    2
 Group:      Development/Libraries
 License:    GPLv2
 Source:     %{name}-%{version}.tar.bz2
@@ -9,6 +9,8 @@ Source1:    foo.txt
 Source20:   bar.tar.gz
 # Gbp-Ignore-Patches: 0
 Patch0:     my.patch
+Patch1:     my-gz.patch.gz
+Patch2:     my-bzip2.patch.bz2
 Patch10:    my2.patch
 Patch20:    my3.patch
 
@@ -21,6 +23,8 @@ Package for testing the RPM functionality of git-buildpackage.
 %setup -n %{name} -a 20
 
 %patch0
+%patch1 -p1
+%patch2 -p1
 %patch10 -p1
 
 
