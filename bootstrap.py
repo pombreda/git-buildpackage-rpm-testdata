@@ -20,6 +20,7 @@
 """Script for bootstrapping and updating the unittest data"""
 
 import argparse
+from fnmatch import fnmatch
 from glob import glob
 import logging
 import os
@@ -94,9 +95,20 @@ def build_test_pkg(pkg_name, branch, outdir):
             raise Exception('Building %s / %s failed! Builddata can be found '
                             'in %s' % (pkg_name, tag, builddir))
 
+        # Create subdirs
+        orig_dir = '%s/%s' % (outdir, 'orig')
+        if not os.path.isdir(orig_dir):
+            os.mkdir(orig_dir)
+
         for fname in glob('%s/SRPMS/*rpm' % builddir):
             LOG.debug('Copying %s -> %s' % (fname, outdir))
             shutil.copy(fname, outdir)
+        for fname in os.listdir('%s/SOURCES' % builddir):
+            if (fnmatch(fname, 'gbp*tar.gz') or fnmatch(fname, 'gbp*tar.bz2') or
+                    fnmatch(fname, 'gbp*zip')):
+                LOG.debug('Copying %s -> %s' % (fname, outdir))
+
+                shutil.copy('%s/SOURCES/%s' % (builddir, fname), orig_dir)
         shutil.rmtree(builddir)
 
 def update_pkg_branches(pkg_name, remote, force=False):
@@ -145,9 +157,18 @@ def main(argv=None):
                     build_test_pkg(pkg, branch, outdatadir)
             git_cmd('checkout', ['master'])
 
-        for fname in os.listdir(outdatadir):
-            if not os.path.exists(fname) or args.overwrite:
-                shutil.copy('%s/%s' % (outdatadir, fname), '.')
+        for root, dirs, files in os.walk(outdatadir):
+            relroot = os.path.relpath(root, outdatadir)
+            for dname in dirs:
+                relpath = '%s/%s' % (relroot, dname)
+                if not os.path.isdir(relpath):
+                    os.makedirs(relpath)
+            for fname in files:
+                relpath = '%s/%s' % (relroot, fname)
+                if not os.path.exists(relpath) or args.overwrite:
+                    shutil.copy('%s/%s' % (root, fname), relpath)
+                else:
+                    LOG.debug('Skipping %s' % relpath)
     finally:
         if args.keep_tmp:
             LOG.info('Sparing temporary directory: %s' % outdatadir)
