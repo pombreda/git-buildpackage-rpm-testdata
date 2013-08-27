@@ -41,19 +41,22 @@ class GitError(Exception):
     pass
 
 
-def run_cmd(cmd, opts=None, capture_stdout=False):
+def run_cmd(cmd, opts=None, capture_stdout=False, capture_stderr=False):
     """Run command"""
     args = [cmd] + opts if opts else [cmd]
     stdout = subprocess.PIPE if capture_stdout else None
+    stderr = subprocess.PIPE if capture_stderr else None
     LOG.debug("Running command: '%s'" % ' '.join(args))
-    popen = subprocess.Popen(args, stdout=stdout)
-    stdout, _stderr = popen.communicate()
-    return (popen.returncode, stdout.splitlines() if stdout else stdout)
+    popen = subprocess.Popen(args, stdout=stdout, stderr=stderr)
+    stdout, stderr = popen.communicate()
+    ret_out = stdout.splitlines() if stdout else stdout
+    ret_err = stderr.splitlines() if stderr else stderr
+    return (popen.returncode, ret_out, ret_err)
 
 def git_cmd(cmd, opts=None, capture_stdout=False):
     """Run git command"""
     git_opts = [cmd] + opts if opts else [cmd]
-    ret, stdout = run_cmd('git', git_opts, capture_stdout)
+    ret, stdout, _stderr = run_cmd('git', git_opts, capture_stdout)
     if ret:
         raise GitError("Git cmd ('%s') failed!" % ('git ' + ' '.join(git_opts)))
     return stdout
@@ -72,9 +75,23 @@ def parse_args(argv=None):
                         help="Do not build the packages")
     parser.add_argument('--keep-tmp', '-k', action='store_true',
                         help="Do not remote the temporary data dir")
+    parser.add_argument('--silent-build', '-s', action='store_true',
+                        help="Silent build, i.e. no rpmbuild output shown")
     return parser.parse_args(argv)
 
-def build_test_pkg(pkg_name, branch, outdir):
+def do_build(tag, builddir, silent_build=False):
+    """Run git-buildpackage-rpm"""
+    gbp_opts =  ['--git-ignore-untracked','--git-export=%s' % tag,
+                 '--git-export-dir=%s' % builddir]
+    ret, out, _err = run_cmd('git-buildpackage-rpm', gbp_opts, True,
+                             silent_build)
+    if ret:
+        for line in out:
+            print line
+        raise Exception('Building %s failed! Builddata can be found '
+                        'in %s' % (tag, builddir))
+
+def build_test_pkg(pkg_name, branch, outdir, silent_build=False):
     """Build the test package and extract unit test data"""
     if branch == 'master':
         tag_pattern = 'srcdata/%s/release/*' % pkg_name
@@ -91,14 +108,7 @@ def build_test_pkg(pkg_name, branch, outdir):
     for ind, tag in enumerate(tags):
         builddir = tempfile.mkdtemp(dir='.',
                                     prefix='build-%s-%s_' % (pkg_name, ind))
-        gbp_opts =  ['--git-ignore-untracked','--git-export=%s' % tag,
-                     '--git-export-dir=%s' % builddir]
-        ret, out = run_cmd('git-buildpackage-rpm', gbp_opts, True)
-        if ret:
-            for line in out:
-                print line
-            raise Exception('Building %s / %s failed! Builddata can be found '
-                            'in %s' % (pkg_name, tag, builddir))
+        do_build(tag, builddir, silent_build)
 
         # Run postbuild_all hook
         if 'postbuild' in hooks:
@@ -165,7 +175,7 @@ def main(argv=None):
         if not args.no_build:
             for pkg, pkgconf in TEST_PKGS.iteritems():
                 for branch in pkgconf['build_branches']:
-                    build_test_pkg(pkg, branch, outdatadir)
+                    build_test_pkg(pkg, branch, outdatadir, args.silent_build)
             git_cmd('checkout', ['master'])
 
         for root, dirs, files in os.walk(outdatadir):
