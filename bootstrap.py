@@ -82,6 +82,11 @@ def build_test_pkg(pkg_name, branch, outdir):
         tag_pattern = 'srcdata/%s/%s/release/*' % (pkg_name, branch)
 
     git_cmd('checkout', ['srcdata/%s/%s' % (pkg_name, branch)])
+    # Check for hooks
+    hooks = {}
+    if os.path.exists('.bootstrap_hooks.py'):
+        LOG.info('Loading bootstrap hooks')
+        execfile('.bootstrap_hooks.py', hooks, hooks)
     tags = git_cmd('tag', ['-l', tag_pattern], True)
     for ind, tag in enumerate(tags):
         builddir = tempfile.mkdtemp(dir='.',
@@ -94,6 +99,12 @@ def build_test_pkg(pkg_name, branch, outdir):
                 print line
             raise Exception('Building %s / %s failed! Builddata can be found '
                             'in %s' % (pkg_name, tag, builddir))
+
+        # Run postbuild_all hook
+        if 'postbuild' in hooks:
+            LOG.info('Running postbuild_all() hook for %s / %s' %
+                        (pkg_name, tag))
+            hooks['postbuild'](builddir, tag, LOG)
 
         # Create subdirs
         orig_dir = '%s/%s' % (outdir, 'orig')
