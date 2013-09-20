@@ -28,12 +28,14 @@ import shutil
 import subprocess
 import sys
 import tempfile
+from xml.dom import minidom
 
 LOG = logging.getLogger(os.path.basename(sys.argv[0]))
 TEST_PKGS = {'gbp-test-native': {'build_branches': ['master']},
              'gbp-test-native2': {'build_branches': ['master']},
              'gbp-test': {'build_branches': ['master', 'fork']},
-             'gbp-test2': {'build_branches': ['master']}}
+             'gbp-test2': {'build_branches': ['master'],
+                           'export_branches': ['master', 'upstream']}}
 
 
 class GitError(Exception):
@@ -132,6 +134,42 @@ def build_test_pkg(pkg_name, branch, outdir, silent_build=False):
                 shutil.copy('%s/SOURCES/%s' % (builddir, fname), orig_dir)
         shutil.rmtree(builddir)
 
+
+class RepoManifest(object):
+    """Class representing a test repo manifest file"""
+    def __init__(self):
+        self._doc = minidom.Document()
+        self._doc.appendChild(self._doc.createElement("gbp-test-manifest"))
+
+    def add_project(self, name, branches):
+        """Add new project to the manifest"""
+        prj_e = self._doc.createElement('project')
+        prj_e.setAttribute('name', name)
+        for branch, revision in branches.iteritems():
+            br_e = self._doc.createElement('branch')
+            br_e.setAttribute('name', branch)
+            br_e.setAttribute('revision', revision)
+            prj_e.appendChild(br_e)
+        self._doc.firstChild.appendChild(prj_e)
+
+    def write(self, filename):
+        """Write to file"""
+        with open(filename, 'w') as fileobj:
+            fileobj.write(self._doc.toprettyxml())
+
+def update_testrepo_manifest(manifest, pkg_name, branches):
+    """
+    Update a manifest file describing the branches/sha1s of a test git repo
+    used by the gbp buildpackage-rpm and pq unit tests.
+    """
+    out_branches = {}
+    for branch in branches:
+        in_branch = 'srcdata/%s/%s' % (pkg_name, branch)
+        sha = git_cmd('rev-parse', ['%s^0' % in_branch], True)[0]
+        out_branches[branch] = sha.strip()
+    manifest.add_project(pkg_name, out_branches)
+
+
 def update_pkg_branches(pkg_name, remote, force=False):
     """Update srcdata branches"""
     brs = git_cmd('branch', ['-r', '--list', '%s/srcdata/%s/*' %
@@ -172,12 +210,18 @@ def main(argv=None):
         if args.update_branches != 'no':
             force = True if args.update_branches == 'force' else False
             update_from_remote('origin', force=force)
-        if not args.no_build:
-            for pkg, pkgconf in TEST_PKGS.iteritems():
+        test_manifest = RepoManifest()
+        for pkg, pkgconf in TEST_PKGS.iteritems():
+            if 'export_branches' in pkgconf:
+                update_testrepo_manifest(test_manifest, pkg,
+                                         pkgconf['export_branches'])
+            if not args.no_build:
                 for branch in pkgconf['build_branches']:
                     build_test_pkg(pkg, branch, outdatadir, args.silent_build)
             git_cmd('checkout', ['master'])
 
+        # Copy all data
+        test_manifest.write('test-repo-manifest.xml')
         for root, dirs, files in os.walk(outdatadir):
             relroot = os.path.relpath(root, outdatadir)
             for dname in dirs:
