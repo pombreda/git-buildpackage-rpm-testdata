@@ -28,7 +28,8 @@ import shutil
 import subprocess
 import sys
 import tempfile
-from xml.dom import minidom
+
+from tests.component.rpm import RepoManifest
 
 LOG = logging.getLogger(os.path.basename(sys.argv[0]))
 TEST_PKGS = {'gbp-test-native': {'build_branches': ['master']},
@@ -134,28 +135,6 @@ def build_test_pkg(pkg_name, branch, outdir, silent_build=False):
                 shutil.copy('%s/SOURCES/%s' % (builddir, fname), orig_dir)
         shutil.rmtree(builddir)
 
-
-class RepoManifest(object):
-    """Class representing a test repo manifest file"""
-    def __init__(self):
-        self._doc = minidom.Document()
-        self._doc.appendChild(self._doc.createElement("gbp-test-manifest"))
-
-    def add_project(self, name, branches):
-        """Add new project to the manifest"""
-        prj_e = self._doc.createElement('project')
-        prj_e.setAttribute('name', name)
-        for branch, revision in branches.iteritems():
-            br_e = self._doc.createElement('branch')
-            br_e.setAttribute('name', branch)
-            br_e.setAttribute('revision', revision)
-            prj_e.appendChild(br_e)
-        self._doc.firstChild.appendChild(prj_e)
-
-    def write(self, filename):
-        """Write to file"""
-        with open(filename, 'w') as fileobj:
-            fileobj.write(self._doc.toprettyxml())
 
 def update_testrepo_manifest(manifest, pkg_name, branches):
     """
