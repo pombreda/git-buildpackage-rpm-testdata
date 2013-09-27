@@ -59,7 +59,7 @@ def run_cmd(cmd, opts=None, capture_stdout=False, capture_stderr=False):
 def git_cmd(cmd, opts=None, capture_stdout=False):
     """Run git command"""
     git_opts = [cmd] + opts if opts else [cmd]
-    ret, stdout, _stderr = run_cmd('git', git_opts, capture_stdout)
+    ret, stdout, _stderr = run_cmd('git', git_opts, capture_stdout, True)
     if ret:
         raise GitError("Git cmd ('%s') failed!" % ('git ' + ' '.join(git_opts)))
     return stdout
@@ -84,8 +84,8 @@ def parse_args(argv=None):
 
 def do_build(tag, builddir, silent_build=False):
     """Run git-buildpackage-rpm"""
-    gbp_opts =  ['--git-ignore-untracked','--git-export=%s' % tag,
-                 '--git-export-dir=%s' % builddir]
+    gbp_opts =  ['--git-ignore-new','--git-export=%s' % tag,
+                 '--git-export-dir=%s' % builddir, '--git-ignore-branch']
     ret, out, _err = run_cmd('git-buildpackage-rpm', gbp_opts, True,
                              silent_build)
     if ret:
@@ -96,17 +96,22 @@ def do_build(tag, builddir, silent_build=False):
 
 def build_test_pkg(pkg_name, branch, outdir, silent_build=False):
     """Build the test package and extract unit test data"""
+    LOG.info('Building package %s' % pkg_name)
     if branch == 'master':
         tag_pattern = 'srcdata/%s/release/*' % pkg_name
     else:
         tag_pattern = 'srcdata/%s/%s/release/*' % (pkg_name, branch)
 
-    git_cmd('checkout', ['srcdata/%s/%s' % (pkg_name, branch)])
+    build_branch = 'srcdata/%s/%s' % (pkg_name, branch)
     # Check for hooks
     hooks = {}
-    if os.path.exists('.bootstrap_hooks.py'):
+    try:
+        hook_py = git_cmd('show', ['%s:.bootstrap_hooks.py' % build_branch],
+                          True)
         LOG.info('Loading bootstrap hooks')
-        execfile('.bootstrap_hooks.py', hooks, hooks)
+        exec('.bootstrap_hooks.py', hooks, hooks)
+    except GitError:
+        LOG.debug('No hooks found for %s' % build_branch)
     tags = git_cmd('tag', ['-l', tag_pattern], True)
     for ind, tag in enumerate(tags):
         builddir = tempfile.mkdtemp(dir='.',
@@ -205,7 +210,6 @@ def main(argv=None):
             if not args.no_build:
                 for branch in pkgconf['build_branches']:
                     build_test_pkg(pkg, branch, outdatadir, args.silent_build)
-            git_cmd('checkout', [orig_rev])
 
         # Copy all data
         test_manifest.write('test-repo-manifest.xml')
