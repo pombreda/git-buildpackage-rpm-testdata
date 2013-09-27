@@ -185,6 +185,14 @@ def main(argv=None):
         LOG.setLevel(logging.DEBUG)
 
     outdatadir = tempfile.mkdtemp(prefix='gbp_unittest_outdata_')
+
+    # Get current branch / revision
+    try:
+        _cur_ref = git_cmd('symbolic-ref', ['HEAD'], True)[0].strip()
+        orig_rev = _cur_ref.replace('refs/heads/', '')
+    except GitError:
+        orig_rev = git_cmd('rev-parse', ['HEAD'], True)[0].strip()
+
     try:
         if args.update_branches != 'no':
             force = True if args.update_branches == 'force' else False
@@ -197,7 +205,7 @@ def main(argv=None):
             if not args.no_build:
                 for branch in pkgconf['build_branches']:
                     build_test_pkg(pkg, branch, outdatadir, args.silent_build)
-            git_cmd('checkout', ['master'])
+            git_cmd('checkout', [orig_rev])
 
         # Copy all data
         test_manifest.write('test-repo-manifest.xml')
@@ -218,7 +226,7 @@ def main(argv=None):
             LOG.info('Sparing temporary directory: %s' % outdatadir)
         else:
             shutil.rmtree(outdatadir)
-        git_cmd('checkout', ['master'])
+        git_cmd('checkout', [orig_rev])
 
 
 if __name__ == '__main__':
