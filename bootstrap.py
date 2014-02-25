@@ -79,7 +79,7 @@ def parse_args(argv=None):
     parser.add_argument('--no-build', action='store_true',
                         help="Do not build the packages")
     parser.add_argument('--keep-tmp', '-k', action='store_true',
-                        help="Do not remote the temporary data dir")
+                        help="Do not remove the temporary data dir")
     parser.add_argument('--silent-build', '-s', action='store_true',
                         help="Silent build, i.e. no rpmbuild output shown")
     return parser.parse_args(argv)
