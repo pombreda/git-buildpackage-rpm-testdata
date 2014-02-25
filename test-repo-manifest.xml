@@ -1,8 +1,14 @@
 <?xml version="1.0" ?>
 <gbp-test-manifest>
 	<project name="gbp-test">
-		<branch name="master" revision="a70b69e5210f34b238627a9969b5cce48f600e77"/>
+		<branch name="master" revision="cbbe5a0a5308ca74ddb306ed781d26fc3a918afd"/>
 		<branch name="upstream" revision="6450890aa002b0868537ee50cc1aea177fdcc941"/>
+	</project>
+	<project name="gbp-test-native2">
+		<branch name="master" revision="3da6930adaaef1cf7c67c97244d72a4aaef13f00"/>
+	</project>
+	<project name="gbp-test-native">
+		<branch name="master" revision="1b89d1d93044b12e4adc102f7c30feaabc41ba58"/>
 	</project>
 	<project name="gbp-test2">
 		<branch name="master-orphan" revision="33c84e86148c3707d2880f439529074296f03d29"/>

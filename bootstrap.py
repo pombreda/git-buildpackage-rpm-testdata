@@ -32,8 +32,10 @@ import tempfile
 from tests.component.rpm import RepoManifest
 
 LOG = logging.getLogger(os.path.basename(sys.argv[0]))
-TEST_PKGS = {'gbp-test-native': {'build_branches': ['master']},
-             'gbp-test-native2': {'build_branches': ['master']},
+TEST_PKGS = {'gbp-test-native': {'build_branches': ['master'],
+                                  'export_branches': ['master']},
+             'gbp-test-native2': {'build_branches': ['master'],
+                                  'export_branches': ['master']},
              'gbp-test': {'build_branches': ['master', 'fork'],
                           'export_branches': ['master', 'upstream']},
              'gbp-test2': {'build_branches': ['master'],
