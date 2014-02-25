@@ -44,3 +44,10 @@ install %{SOURCE0} %{buildroot}/%{_datadir}/%{name}
 %defattr(-,root,root,-)
 %dir %{_datadir}/%{name}
 %{_datadir}/%{name}
+
+
+
+%changelog
+* Tue Feb 25 2014 Markus Lehtonen <markus.lehtonen@linux.intel.com> 1.1-2
+- Version 1.1
+
