@@ -139,7 +139,7 @@ def build_test_pkg(pkg_name, branch, outdir, silent_build=False):
         for fname in os.listdir('%s/SOURCES' % builddir):
             if (fnmatch(fname, 'gbp*tar.gz') or fnmatch(fname, 'gbp*tar.bz2') or
                     fnmatch(fname, 'gbp*zip')):
-                LOG.debug('Copying %s -> %s' % (fname, outdir))
+                LOG.debug('Copying %s -> %s' % (fname, orig_dir))
 
                 shutil.copy('%s/SOURCES/%s' % (builddir, fname), orig_dir)
         shutil.rmtree(builddir)
