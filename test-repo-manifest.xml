@@ -1,19 +1,19 @@
 <?xml version="1.0" ?>
 <gbp-test-manifest>
 	<project name="gbp-test">
-		<branch name="pq/master" revision="972ecde7c94eb00f4d310aa0e3e8f72ed215f591"/>
-		<branch name="master" revision="b82fd1a61db4221263b2c110f60c6d07cb0203df"/>
-		<branch name="upstream" revision="6450890aa002b0868537ee50cc1aea177fdcc941"/>
+		<branch name="master" orig_name="srcdata/gbp-test/master" revision="b82fd1a61db4221263b2c110f60c6d07cb0203df"/>
+		<branch name="upstream" orig_name="srcdata/gbp-test/upstream" revision="6450890aa002b0868537ee50cc1aea177fdcc941"/>
+		<branch name="pq/master" orig_name="srcdata/gbp-test/pq/master" revision="972ecde7c94eb00f4d310aa0e3e8f72ed215f591"/>
 	</project>
 	<project name="gbp-test-native2">
-		<branch name="master" revision="3da6930adaaef1cf7c67c97244d72a4aaef13f00"/>
+		<branch name="master" orig_name="srcdata/gbp-test-native2/master" revision="3da6930adaaef1cf7c67c97244d72a4aaef13f00"/>
 	</project>
 	<project name="gbp-test-native">
-		<branch name="master" revision="1b89d1d93044b12e4adc102f7c30feaabc41ba58"/>
+		<branch name="master" orig_name="srcdata/gbp-test-native/master" revision="1b89d1d93044b12e4adc102f7c30feaabc41ba58"/>
 	</project>
 	<project name="gbp-test2">
-		<branch name="master-orphan" revision="33c84e86148c3707d2880f439529074296f03d29"/>
-		<branch name="master" revision="cd2763432f4ad93b29c6f22aee7f623552156a81"/>
-		<branch name="upstream" revision="6dccee0ab7689e5ae446d39535138ea39a88e70c"/>
+		<branch name="master" orig_name="srcdata/gbp-test2/master" revision="cd2763432f4ad93b29c6f22aee7f623552156a81"/>
+		<branch name="master-orphan" orig_name="srcdata/gbp-test2/master-orphan" revision="33c84e86148c3707d2880f439529074296f03d29"/>
+		<branch name="upstream" orig_name="srcdata/gbp-test2/upstream" revision="6dccee0ab7689e5ae446d39535138ea39a88e70c"/>
 	</project>
 </gbp-test-manifest>

@@ -55,10 +55,10 @@ class TestDataRepoManifest(RepoManifest):
         """Add new project to the manifest"""
         prj_e = self._doc.createElement('project')
         prj_e.setAttribute('name', name)
-        for branch, revision in branches.iteritems():
+        for branch in branches:
             br_e = self._doc.createElement('branch')
-            br_e.setAttribute('name', branch)
-            br_e.setAttribute('revision', revision)
+            for key, val in branch.iteritems():
+                br_e.setAttribute(key, val)
             prj_e.appendChild(br_e)
         self._doc.firstChild.appendChild(prj_e)
 
@@ -165,12 +165,13 @@ def update_testrepo_manifest(manifest, pkg_name, branches):
     Update a manifest file describing the branches/sha1s of a test git repo
     used by the gbp buildpackage-rpm and pq unit tests.
     """
-    out_branches = {}
+    branches_meta = []
     for branch in branches:
         in_branch = 'srcdata/%s/%s' % (pkg_name, branch)
         sha = git_cmd('rev-parse', ['%s^0' % in_branch], True)[0]
-        out_branches[branch] = sha.strip()
-    manifest.add_project(pkg_name, out_branches)
+        branches_meta.append({'name': branch, 'orig_name': in_branch,
+                              'revision': sha.strip()})
+    manifest.add_project(pkg_name, branches_meta)
 
 
 def update_pkg_branches(pkg_name, remote, force=False):
