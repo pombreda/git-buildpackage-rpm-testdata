@@ -109,8 +109,9 @@ def do_build(tag, builddir, silent_build=False):
     """Run git-buildpackage-rpm"""
     gbp_opts =  ['--git-ignore-new','--git-export=%s' % tag,
                  '--git-export-dir=%s' % builddir, '--git-ignore-branch']
-    ret, out, _err = run_cmd('git-buildpackage-rpm', gbp_opts, True,
-                             silent_build)
+    rpmbuild_opts = ['-ba', '--target=noarch']
+    ret, out, _err = run_cmd('git-buildpackage-rpm', gbp_opts + rpmbuild_opts,
+                             True, silent_build)
     if ret:
         for line in out:
             print line
@@ -148,12 +149,17 @@ def build_test_pkg(pkg_name, branch, outdir, silent_build=False):
 
         # Create subdirs
         orig_dir = '%s/%s' % (outdir, 'orig')
-        if not os.path.isdir(orig_dir):
-            os.mkdir(orig_dir)
+        rpm_dir = '%s/%s' % (outdir, 'rpm')
+        for path in (orig_dir, rpm_dir):
+            if not os.path.isdir(path):
+                os.mkdir(path)
 
         for fname in glob('%s/SRPMS/*rpm' % builddir):
             LOG.debug('Copying %s -> %s', fname, outdir)
             shutil.copy(fname, outdir)
+        for fname in glob('%s/RPMS/*/*rpm' % builddir):
+            LOG.debug('Copying %s -> %s', fname, rpm_dir)
+            shutil.copy(fname, rpm_dir)
         for fname in os.listdir('%s/SOURCES' % builddir):
             if (fnmatch(fname, 'gbp*tar.gz') or fnmatch(fname, 'gbp*tar.bz2') or
                     fnmatch(fname, 'gbp*zip')):
