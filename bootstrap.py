@@ -36,16 +36,17 @@ from tests.component.rpm import RepoManifest
 
 
 LOG = logging.getLogger(os.path.basename(sys.argv[0]))
+# Use mangled pristine-tar branch names in order to not confuse pristine-tar
 TEST_PKGS = {'gbp-test-native': {'build_branches': ['master'],
                                   'export_branches': ['master']},
              'gbp-test-native2': {'build_branches': ['master'],
                                   'export_branches': ['master']},
              'gbp-test': {'build_branches': ['master', 'fork'],
                           'export_branches': ['master', 'upstream',
-                                              'pq/master']},
+                                              'pq/master', 'pristine_tar']},
              'gbp-test2': {'build_branches': ['master'],
                            'export_branches': ['master', 'master-orphan',
-                           'upstream']}}
+                                               'upstream', 'pristine_tar']}}
 
 
 class GitError(Exception):

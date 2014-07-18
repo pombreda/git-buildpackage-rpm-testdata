@@ -4,6 +4,7 @@
 		<branch name="master" orig_name="srcdata/gbp-test/master" revision="b82fd1a61db4221263b2c110f60c6d07cb0203df"/>
 		<branch name="upstream" orig_name="srcdata/gbp-test/upstream" revision="6450890aa002b0868537ee50cc1aea177fdcc941"/>
 		<branch name="pq/master" orig_name="srcdata/gbp-test/pq/master" revision="972ecde7c94eb00f4d310aa0e3e8f72ed215f591"/>
+		<branch name="pristine_tar" orig_name="srcdata/gbp-test/pristine_tar" revision="ee75150c3e9f3dacc1000d7ebc34a833e23b0356"/>
 	</project>
 	<project name="gbp-test-native2">
 		<branch name="master" orig_name="srcdata/gbp-test-native2/master" revision="3da6930adaaef1cf7c67c97244d72a4aaef13f00"/>
@@ -15,5 +16,6 @@
 		<branch name="master" orig_name="srcdata/gbp-test2/master" revision="cd2763432f4ad93b29c6f22aee7f623552156a81"/>
 		<branch name="master-orphan" orig_name="srcdata/gbp-test2/master-orphan" revision="33c84e86148c3707d2880f439529074296f03d29"/>
 		<branch name="upstream" orig_name="srcdata/gbp-test2/upstream" revision="6dccee0ab7689e5ae446d39535138ea39a88e70c"/>
+		<branch name="pristine_tar" orig_name="srcdata/gbp-test2/pristine_tar" revision="75e1ee1d3c0b920491cb9fc827be6de8cd9f0d9f"/>
 	</project>
 </gbp-test-manifest>
