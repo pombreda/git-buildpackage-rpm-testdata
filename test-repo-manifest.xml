@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 <gbp-test-manifest>
 	<project name="gbp-test">
-		<branch name="master" revision="cbbe5a0a5308ca74ddb306ed781d26fc3a918afd"/>
+		<branch name="master" revision="b82fd1a61db4221263b2c110f60c6d07cb0203df"/>
 		<branch name="upstream" revision="6450890aa002b0868537ee50cc1aea177fdcc941"/>
 	</project>
 	<project name="gbp-test-native2">
