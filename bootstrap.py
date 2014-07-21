@@ -31,6 +31,10 @@ import tempfile
 
 from tests.component.rpm import RepoManifest
 
+# Disable "Instance of 'Document' has no 'firstChild' member"
+#   pylint: disable=E1103
+
+
 LOG = logging.getLogger(os.path.basename(sys.argv[0]))
 TEST_PKGS = {'gbp-test-native': {'build_branches': ['master'],
                                   'export_branches': ['master']},
