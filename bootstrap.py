@@ -68,7 +68,7 @@ def run_cmd(cmd, opts=None, capture_stdout=False, capture_stderr=False):
     args = [cmd] + opts if opts else [cmd]
     stdout = subprocess.PIPE if capture_stdout else None
     stderr = subprocess.PIPE if capture_stderr else None
-    LOG.debug("Running command: '%s'" % ' '.join(args))
+    LOG.debug("Running command: '%s'", ' '.join(args))
     popen = subprocess.Popen(args, stdout=stdout, stderr=stderr)
     stdout, stderr = popen.communicate()
     ret_out = stdout.splitlines() if stdout else stdout
@@ -115,7 +115,7 @@ def do_build(tag, builddir, silent_build=False):
 
 def build_test_pkg(pkg_name, branch, outdir, silent_build=False):
     """Build the test package and extract unit test data"""
-    LOG.info('Building package %s' % pkg_name)
+    LOG.info('Building package %s', pkg_name)
     if branch == 'master':
         tag_pattern = 'srcdata/%s/release/*' % pkg_name
     else:
@@ -130,7 +130,7 @@ def build_test_pkg(pkg_name, branch, outdir, silent_build=False):
         LOG.info('Loading bootstrap hooks')
         exec('.bootstrap_hooks.py', hooks, hooks)
     except GitError:
-        LOG.debug('No hooks found for %s' % build_branch)
+        LOG.debug('No hooks found for %s', build_branch)
     tags = git_cmd('tag', ['-l', tag_pattern], True)
     for ind, tag in enumerate(tags):
         builddir = tempfile.mkdtemp(dir='.',
@@ -139,8 +139,7 @@ def build_test_pkg(pkg_name, branch, outdir, silent_build=False):
 
         # Run postbuild_all hook
         if 'postbuild' in hooks:
-            LOG.info('Running postbuild_all() hook for %s / %s' %
-                        (pkg_name, tag))
+            LOG.info('Running postbuild_all() hook for %s / %s', pkg_name, tag)
             hooks['postbuild'](builddir, tag, LOG)
 
         # Create subdirs
@@ -149,12 +148,12 @@ def build_test_pkg(pkg_name, branch, outdir, silent_build=False):
             os.mkdir(orig_dir)
 
         for fname in glob('%s/SRPMS/*rpm' % builddir):
-            LOG.debug('Copying %s -> %s' % (fname, outdir))
+            LOG.debug('Copying %s -> %s', fname, outdir)
             shutil.copy(fname, outdir)
         for fname in os.listdir('%s/SOURCES' % builddir):
             if (fnmatch(fname, 'gbp*tar.gz') or fnmatch(fname, 'gbp*tar.bz2') or
                     fnmatch(fname, 'gbp*zip')):
-                LOG.debug('Copying %s -> %s' % (fname, orig_dir))
+                LOG.debug('Copying %s -> %s', fname, orig_dir)
 
                 shutil.copy('%s/SOURCES/%s' % (builddir, fname), orig_dir)
         shutil.rmtree(builddir)
@@ -179,7 +178,7 @@ def update_pkg_branches(pkg_name, remote, force=False):
     brs = git_cmd('branch', ['-r', '--list', '%s/srcdata/%s/*' %
                     (remote, pkg_name)], True)
     branches = [brn.strip().split()[0].replace(remote + '/', '') for brn in brs]
-    LOG.info("Updating local branches %s from '%s'" % (branches, remote))
+    LOG.info("Updating local branches %s from '%s'", branches, remote)
 
     for branch in branches:
         git_cmd('checkout', [branch])
@@ -188,7 +187,7 @@ def update_pkg_branches(pkg_name, remote, force=False):
             git_cmd('merge', ['--ff-only', remote_branch], True)
         except GitError:
             if force:
-                LOG.warning('Doing hard reset for branch %s' % branch)
+                LOG.warning('Doing hard reset for branch %s', branch)
                 git_cmd('reset', ['--hard', remote_branch], True)
             else:
                 raise Exception('Failed to do fast-forward on %s' % branch)
@@ -244,10 +243,10 @@ def main(argv=None):
                 if not os.path.exists(relpath) or args.overwrite:
                     shutil.copy('%s/%s' % (root, fname), relpath)
                 else:
-                    LOG.debug('Skipping %s' % relpath)
+                    LOG.debug('Skipping %s', relpath)
     finally:
         if args.keep_tmp:
-            LOG.info('Sparing temporary directory: %s' % outdatadir)
+            LOG.info('Sparing temporary directory: %s', outdatadir)
         else:
             shutil.rmtree(outdatadir)
         git_cmd('checkout', [orig_rev])
