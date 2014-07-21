@@ -132,7 +132,7 @@ def build_test_pkg(pkg_name, branch, outdir, silent_build=False):
         hook_py = git_cmd('show', ['%s:.bootstrap_hooks.py' % build_branch],
                           True)
         LOG.info('Loading bootstrap hooks')
-        exec('.bootstrap_hooks.py', hooks, hooks)
+        exec(hook_py, hooks, hooks)
     except GitError:
         LOG.debug('No hooks found for %s', build_branch)
     tags = git_cmd('tag', ['-l', tag_pattern], True)
