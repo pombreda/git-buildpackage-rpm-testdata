@@ -232,6 +232,7 @@ def main(argv=None):
         if args.update_branches != 'no':
             force = True if args.update_branches == 'force' else False
             update_from_remote('origin', force=force)
+            git_cmd('checkout', [orig_rev])
         test_manifest = TestDataRepoManifest()
         for pkg, pkgconf in TEST_PKGS.iteritems():
             if 'export_branches' in pkgconf:
